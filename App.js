@@ -7,9 +7,9 @@ import { Root } from "native-base";
 import ReactDOM from 'react-dom';
 
 import AppReducer from './src/reducers';
-import AppWithNavigationState from './navigators/AppNavigator';
-import { middlewares } from './utils/redux';
-import registerServiceWorker from '../registerServiceWorker';
+import AppWithNavigationState from './src/navigators/AppNavigator';
+import { middlewares } from './src/utils/redux';
+import registerServiceWorker from './src/registerServiceWorker';
 
 const enhancer = compose(
     applyMiddleware(middlewares),
@@ -36,10 +36,7 @@ class ReduxExampleApp extends React.Component {
   }
 }
 
-//AppRegistry.registerComponent('ReduxExample', () => ReduxExampleApp);
-
-ReactDOM.render(<Provider />, document.getElementById('root'));
-registerServiceWorker();
+AppRegistry.registerComponent('ReduxExample', () => ReduxExampleApp);
 
 
 export default ReduxExampleApp;
