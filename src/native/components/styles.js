@@ -45,8 +45,7 @@ export default {
       paddingTop: 12,
       paddingLeft: 24,
       paddingBottom:12,
-      paddingRight: 24,
-      fontFamily: 'Helvetica'
+      paddingRight: 24
   },
     btn: {
     borderRadius:23,
