@@ -1,30 +1,19 @@
-import React from 'react'
-import { Route } from 'react-router'
-import { Redirect } from 'react-router-dom'
+/**
+ * Created by gdierks on 07.04.18.
+ */
+
+import React, { Component } from 'react';
 
 
-export default class MainScreen extends React.Component {
+export default class MainScreen extends Component {
+    componentWillMount() {
+        alert('Private home is at: ' + this.props.location.pathname)
+    }
+
     render() {
-        const {
-            isAuthenticated,
-            component: Component,
-            ...props
-        } = this.props
-
         return (
-            <Route
-                {...props}
-                render={props =>
-                    isAuthenticated
-                        ? <Component {...props} />
-                        : (
-                            <Redirect to={{
-                                pathname: '/login',
-                                state: { from: props.location }
-                            }} />
-                        )
-                }
-            />
+                <button onClick={this.props.logout}>Logout Here!</button>
         )
+
     }
 }

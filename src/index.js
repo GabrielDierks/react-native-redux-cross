@@ -54,7 +54,7 @@ const store = createStore(
 
 const PrivateRoute = connect(state => ({
     isAuthenticated: state.authReducer.isAuthenticated
-}))(MainScreen)
+}))(StartScreen)
 
 const Login = connect(null, dispatch => ({
     login: () => {
@@ -68,7 +68,7 @@ const Home = connect(null, dispatch => ({
         dispatch(authFail())
         dispatch(push('/login'))
     }
-}))(StartScreen)
+}))(MainScreen)
 
 const app = document.getElementById('root');
 
