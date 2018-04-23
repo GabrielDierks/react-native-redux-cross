@@ -7,24 +7,25 @@ import {
     routerMiddleware,
     push
 } from 'react-router-redux'
-
+import {reducer as formReducer} from 'redux-form'
 import { createStore, applyMiddleware, combineReducers } from 'redux'
 import createHistory from 'history/createBrowserHistory'
 
 import { Route, Switch } from 'react-router'
-import LoginScreen from './web/components/LoginScreen'
+import Login from './web/components/LoginScreen'
 import MainScreen from './web/components/MainScreen'
 import StartScreen from './web/components/StartScreen'
 
+import {authFail} from "./web/actions/actions";
+
+import {
+    AUTH_SUCCESS,
+    AUTH_FAIL
+} from './web/actions/constants';
+
 const history = createHistory()
 
-const authSuccess = () => ({
-    type: 'AUTH_SUCCESS'
-})
 
-const authFail = () => ({
-    type: 'AUTH_FAIL'
-})
 
 const initialState = {
     isAuthenticated: false
@@ -32,12 +33,12 @@ const initialState = {
 
 const authReducer = (state = initialState , action) => {
     switch (action.type) {
-        case 'AUTH_SUCCESS':
+        case AUTH_SUCCESS:
             return {
                 ...state,
                 isAuthenticated: true
             }
-        case 'AUTH_FAIL':
+        case AUTH_FAIL:
             return {
                 ...state,
                 isAuthenticated: false
@@ -47,21 +48,22 @@ const authReducer = (state = initialState , action) => {
     }
 }
 
-const store = createStore(
-    combineReducers({ routerReducer, authReducer }),
-    applyMiddleware(routerMiddleware(history)),
-)
+const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ ;
 
+const reducer = combineReducers({
+    authReducer,routerReducer, form: formReducer,
+})
+
+const store = createStore(
+    reducer,
+    composeEnhancers(applyMiddleware(routerMiddleware(history)))
+
+);
 const PrivateRoute = connect(state => ({
     isAuthenticated: state.authReducer.isAuthenticated
 }))(StartScreen)
 
-const Login = connect(null, dispatch => ({
-    login: () => {
-        dispatch(authSuccess())
-        dispatch(push('/'))
-    }
-}))(LoginScreen)
+
 
 const Home = connect(null, dispatch => ({
     logout: () => {

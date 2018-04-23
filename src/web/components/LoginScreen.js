@@ -1,70 +1,89 @@
 import React from 'react'
-import { Field, reduxForm, SubmissionError } from 'redux-form'
+import { Field, reduxForm } from 'redux-form'
 
-import { authSuccess } from '../actions/actions';
+import {authSuccess} from "../actions/actions";
+import {authFail} from "../actions/actions";
+import {push} from "react-router-redux";
 
 
-const sleep = ms => new Promise(resolve => setTimeout(resolve, ms))
+const required = value => (value ? undefined : "Required");
+const maxLength = max => value =>
+    value && value.length > max ? `Must be ${max} characters or less` : undefined;
+const maxLength15 = maxLength(15);
+const minLength = min => value =>
+    value && value.length < min ? `Must be ${min} characters or more` : undefined;
+const minLength8 = minLength(8);
+const email = value =>
+    value && !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(value)
+        ? "Invalid email address"
+        : undefined;
+const alphaNumeric = value =>
+    value && /[^a-zA-Z0-9 ]/i.test(value)
+        ? "Only alphanumeric characters"
+        : undefined;
 
-function submit(values) {
-    return sleep(1000).then(() => {
-        // simulate server latency
-        if (!['test'].includes(values.username)) {
-            throw new SubmissionError({
-                username: 'User does not exist',
-                _error: 'Login failed!'
-            })
-        } else if (values.password !== '123') {
-            throw new SubmissionError({
-                password: 'Wrong password',
-                _error: 'Login failed!'
-            })
-        } else {
-            window.alert(`You submitted:\n\n${JSON.stringify(values, null, 2)}`);
-            this.props.dispatch(authSuccess());
-        }
-    })
-}
+class LoginScreen extends React.Component {
 
-const renderField = ({ input, label, type, meta: { touched, error } }) => (
-    <div>
-        <label>{label}</label>
-        <div>
-            <input {...input} placeholder={label} type={type} />
-            {touched && error && <span>{error}</span>}
-        </div>
-    </div>
-)
 
-const LoginScreen = props => {
-    const { error, handleSubmit, pristine, reset, submitting } = props
-    return (
-        <form onSubmit={handleSubmit(submit)}>
-            <Field
-                name="username"
-                type="text"
-                component={renderField}
-                label="Username"
-            />
-            <Field
-                name="password"
-                type="password"
-                component={renderField}
-                label="Password"
-            />
-            {error && <strong>{error}</strong>}
+    renderField({ input, label, type, meta: { touched, error }}) {
+        return (
             <div>
-                <button type="submit" disabled={submitting} >
-                    Log In
-                </button>
-                {/*<button type="button" disabled={pristine || submitting} onClick={reset}>
-                    Clear Values
-                </button>*/}
+                <label>{label}</label>
+                <div>
+                    <input
+                        placeholder={input.name === "email" ? "E-Mail Adresse" : "Passwort"}
+                        type={type} {...input} />
+                    {touched && error && <span>{error}</span>}
+                </div>
             </div>
-        </form>
-    )
+        );
+    }
+
+    login() {
+        if (this.props.valid) {
+            this.props.dispatch(authSuccess())
+            this.props.dispatch(push('/'))
+        } else {
+            this.props.dispatch(authFail())
+            this.props.dispatch(push('/login'))
+        }
+    }
+
+    render() {
+
+        return (
+            <form>
+                <Field
+                    name="email"
+                    type="text"
+                    component={this.renderField}
+                    validate={[email,required]}
+                />
+                <Field
+                    name="password"
+                    type="password"
+                    component={this.renderField}
+                    validate={[alphaNumeric, minLength8, maxLength15,required]}
+                />
+
+                <div>
+                    <button onClick={() => this.login()}>
+                        Log In
+                    </button>
+                </div>
+            </form>
+        );
+    }
 }
 
-export default reduxForm({
-    form: 'LoginScreen' // a unique identifier for this form
-})(LoginScreen)
+const Login = reduxForm(
+    {
+        form: 'submitValidation',
+    }
+)(LoginScreen);
+
+
+
+export default Login;
+
+
