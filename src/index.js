@@ -3,12 +3,10 @@ import ReactDOM from 'react-dom'
 import { connect, Provider } from 'react-redux'
 import {
     ConnectedRouter,
-    routerReducer,
     routerMiddleware,
     push
 } from 'react-router-redux'
-import {reducer as formReducer} from 'redux-form'
-import { createStore, applyMiddleware, combineReducers } from 'redux'
+import { createStore, applyMiddleware } from 'redux'
 import createHistory from 'history/createBrowserHistory'
 
 import { Route, Switch } from 'react-router'
@@ -18,49 +16,20 @@ import StartScreen from './web/components/StartScreen'
 
 import {authFail} from "./web/actions/actions";
 
-import {
-    AUTH_SUCCESS,
-    AUTH_FAIL
-} from './web/actions/constants';
+import AppReducer from "./web/reducers"
+
+const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ ;
 
 const history = createHistory()
 
 
-
-const initialState = {
-    isAuthenticated: false
-}
-
-const authReducer = (state = initialState , action) => {
-    switch (action.type) {
-        case AUTH_SUCCESS:
-            return {
-                ...state,
-                isAuthenticated: true
-            }
-        case AUTH_FAIL:
-            return {
-                ...state,
-                isAuthenticated: false
-            }
-        default:
-            return state
-    }
-}
-
-const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ ;
-
-const reducer = combineReducers({
-    authReducer,routerReducer, form: formReducer,
-})
-
 const store = createStore(
-    reducer,
+    AppReducer,
     composeEnhancers(applyMiddleware(routerMiddleware(history)))
 
 );
 const PrivateRoute = connect(state => ({
-    isAuthenticated: state.authReducer.isAuthenticated
+    isAuthenticated: state.auth.isAuthenticated
 }))(StartScreen)
 
 
