@@ -36,7 +36,7 @@ export default {
   },
 
   btntxt: {
-      color:"#002e97",
+      color:"black",
       fontSize:14,
       textAlign:'center',
       width:220,

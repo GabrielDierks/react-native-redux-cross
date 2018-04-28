@@ -8,8 +8,6 @@ import styles from "./styles";
 import { checkAuth } from '../../actions/actions';
 import { checkAuthSuccess } from '../../actions/actions';
 
-const background = require("../../../assets/shadow.png");
-
 const required = value => (value ? undefined : "Required");
 const maxLength = max => value =>
     value && value.length > max ? `Must be ${max} characters or less` : undefined;
@@ -67,7 +65,6 @@ class Login extends React.Component<Props, State> {
             <Container>
                 <View style={styles.container}>
                     <Content>
-                        <ImageBackground source={background} style={styles.shadow}>
                             <View style={styles.bg}>
                                 <View style={styles.input}>
                                     <View style={styles.inputtxt}>
@@ -93,7 +90,6 @@ class Login extends React.Component<Props, State> {
                                         ANMELDEN</Text>
                                 </Button>
                             </View>
-                        </ImageBackground>
                     </Content>
                 </View>
             </Container>
